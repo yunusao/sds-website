@@ -19,9 +19,9 @@ const ITEMS: TimelineItem[] = [
   { dateLabel: "July 11, 2020", year: 2020, title: "Sharky Uploads First Ever SDS Video", detail: "Sharky does Sports", highlight: true, imageSrc: "/timeline/sdsFirstVid.jpg" },
   { dateLabel: "July 13, 2020", year: 2020, title: "Starplayers Debut", debutHighlight: true, imageSrc: "/timeline/starzFirst.jpg" },
   { dateLabel: "July 25, 2020", year: 2020, title: "Ilyas Debut", debutHighlight: true, imageSrc: "/timeline/ilyasDebut.jpg" },
-  { dateLabel: "Aug 9, 2020", year: 2020, title: "Liban Debut", imageSrc: "/timeline/libanDebut.jpg" },
+  { dateLabel: "Aug 9, 2020", year: 2020, title: "Liban Debut", debutHighlight: true, imageSrc: "/timeline/libanDebut.jpg" },
   { dateLabel: "Aug 28, 2020", year: 2020, title: "First SDS Episode Recorded In A Studio", detail: "Starplayer, Liban, & Ilyas", highlight: true, imageSrc: "/timeline/firstStu.jpg" },
-  { dateLabel: "Sep 2, 2020", year: 2020, title: "Shaun Debut", imageSrc: "/timeline/shaunDebut.jpg" },
+  { dateLabel: "Sep 2, 2020", year: 2020, title: "Shaun Debut", debutHighlight: true, imageSrc: "/timeline/shaunDebut.jpg" },
   { dateLabel: "Oct 6, 2020", year: 2020, title: "Haseeb Debut", debutHighlight: true, imageSrc: "/timeline/haseebDebut.png" },
 
   { dateLabel: "Mar 23, 2021", year: 2021, title: "First Video @ The Home Studio", highlight: true, imageSrc: "/timeline/homeStudio.png" },

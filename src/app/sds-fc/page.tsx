@@ -343,7 +343,7 @@ export default function SdsFcPage() {
             <div className="mb-3 flex items-center justify-between">
               <span className="text-sm font-black text-white">Instagram</span>
               <a
-                href="https://www.instagram.com/sdsfc/"
+                href="https://www.instagram.com/sdsfc_/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-xs font-bold text-[#C7A24A] hover:underline"

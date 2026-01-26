@@ -1,5 +1,5 @@
-
 import { getChannelInfo } from "@/lib/youtube";
+import AboutTimeline from "@/app/about/about-timeline";
 
 export default async function AboutPage() {
   const mainChannelId = process.env.YOUTUBE_CHANNEL_ID || "";
@@ -54,9 +54,7 @@ export default async function AboutPage() {
                 <div className="mt-1 text-xs font-semibold text-white/60">Total Views</div>
               </div>
               <div className="rounded-xl border border-white/10 bg-black/40 p-4 text-center">
-                <div className="text-2xl font-black text-white">
-                  {mainChannel.videoCount}
-                </div>
+                <div className="text-2xl font-black text-white">{mainChannel.videoCount}</div>
                 <div className="mt-1 text-xs font-semibold text-white/60">Videos</div>
               </div>
             </div>
@@ -92,15 +90,16 @@ export default async function AboutPage() {
                 <div className="mt-1 text-xs font-semibold text-white/60">Total Views</div>
               </div>
               <div className="rounded-xl border border-white/10 bg-black/40 p-4 text-center">
-                <div className="text-2xl font-black text-white">
-                  {secondChannel.videoCount}
-                </div>
+                <div className="text-2xl font-black text-white">{secondChannel.videoCount}</div>
                 <div className="mt-1 text-xs font-semibold text-white/60">Videos</div>
               </div>
             </div>
           </div>
         )}
       </div>
+
+      {/* Interactable timeline (client) */}
+      <AboutTimeline />
     </main>
   );
 }

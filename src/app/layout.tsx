@@ -7,14 +7,10 @@ export const metadata: Metadata = {
   description: "The home of football culture — debates, banter, reactions.",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className="bg-black text-white">
+      <body className="text-white">
         <SiteHeader />
         {children}
       </body>

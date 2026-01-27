@@ -7,10 +7,9 @@ import { FaYoutube, FaSpotify } from "react-icons/fa";
 import { Menu, X } from "lucide-react";
 
 const nav = [
+  { href: "/about", label: "About" },
   { href: "/episodes", label: "Episodes" },
   { href: "/score", label: "SDS Score" },
-  { href: "/community", label: "Community" },
-  { href: "/about", label: "About" },
   { href: "/crew", label: "Crew" },
   { href: "/sds-fc", label: "SDS FC" },
 ];

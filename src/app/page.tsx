@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { getLatestVideo } from "@/lib/youtube";
 import { formatEpisodeTitle } from "@/lib/format";
-import { BsDiscord, BsInstagram, BsTiktok, BsTwitterX, BsX } from "react-icons/bs";
+import { BsDiscord, BsInstagram, BsReddit, BsTiktok, BsTwitterX, BsX } from "react-icons/bs";
 
 function SocialIcon({
   href,
@@ -52,7 +52,6 @@ const DiscordIcon = () => (
 const accessPoints = [
   { title: "Episodes", desc: "Search the archive by guest, topic, team.", href: "/episodes" },
   { title: "SDS Score", desc: "Rate the newest episode (no login).", href: "/score" },
-  { title: "Community", desc: "Join Discord + vote in fan polls.", href: "/community" },
   { title: "About", desc: "SDS history with a timeline.", href: "/about" },
   { title: "Crew", desc: "Profiles + socials for the crew.", href: "/crew" },
   { title: "SDS FC", desc: "Enter club mode (different vibe).", href: "/sds-fc" },
@@ -109,13 +108,6 @@ export default async function HomePage() {
               >
                 SDS Score
               </Link>
-
-              <Link
-                href="/community"
-                className="rounded-full border border-white/30 px-7 py-3 text-sm font-bold transition hover:bg-white hover:text-black"
-              >
-                Community
-              </Link>
             </div>
             {/* Social links */}
             <div className="mt-6 flex justify-center gap-4">
@@ -133,6 +125,9 @@ export default async function HomePage() {
 
               <SocialIcon href="https://www.tiktok.com/@sdspod" label="TikTok">
                 <BsTiktok />
+              </SocialIcon>
+              <SocialIcon href="https://www.reddit.com/r/SDSPodcast/" label="Reddit">
+                <BsReddit />
               </SocialIcon>
             </div>
           </div>

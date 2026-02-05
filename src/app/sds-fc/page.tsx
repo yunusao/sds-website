@@ -110,116 +110,91 @@ export default function SdsFcPage() {
 
   const lastEvent = matchday?.lastEvent ?? null;
   const nextEvent = matchday?.nextEvent ?? null;
-
   return (
     <main className="relative">
       {/* HERO */}
-      <section className="relative isolate min-h-[92vh] overflow-hidden">
+      <section className="relative isolate min-h-screen overflow-hidden">
         {/* Background */}
         <div className="absolute inset-0">
-          {/* HERO IMAGE */}
           <img
-          src="/sds-fc/hero.webp"
-          alt="SDS FC Matchday"
-          className="h-full w-full object-cover"
+            src="/sds-fc/hero.webp"
+            alt="SDS FC Matchday"
+            className="h-full w-full object-cover"
           />
-
-          {/* Dark overlay for readability */}
-          <div className="absolute inset-0 bg-black/70" />
-
-          {/* Gold glow */}
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(199,162,74,0.25),transparent_60%)]" />
-
-          {/* Fade to black bottom */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/40 to-black" />
+          {/* overall dark overlay */}
+          <div className="absolute inset-0 bg-black/45" />
+          {/* nice top glow */}
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(199,162,74,0.18),transparent_60%)]" />
+          {/* stronger bottom fade so buttons pop */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/40 to-black/95" />
         </div>
 
-
-        {/* Spotlight sweep */}
-        <div className="pointer-events-none absolute -top-40 left-1/2 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-[#C7A24A]/15 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-40 left-1/3 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-white/10 blur-3xl" />
-
-        <div className="relative mx-auto max-w-7xl px-4 pt-14">
-          <div className="mx-auto max-w-3xl text-center">
-            <div className="mx-auto flex w-fit items-center gap-3 rounded-full border border-[#C7A24A]/25 bg-black/40 px-4 py-2 text-xs font-bold text-white/75">
-              <span className="h-2 w-2 rounded-full bg-[#C7A24A]" />
-              MATCHDAY HUB • SDS FC
+        {/* Content area (logo + title near top/middle, not touching buttons) */}
+        <div className="relative mx-auto flex min-h-screen max-w-7xl px-4 pt-28 pb-28">
+          <div className="mx-auto w-full max-w-3xl text-center">
+            {/* Crest/logo */}
+            <div className="flex justify-center">
+              <img
+                src="/sds-fc/fclogo.png"
+                alt="SDS FC"
+                className="w-[140px] sm:w-[170px] lg:w-[190px] object-contain drop-shadow-[0_0_45px_rgba(199,162,74,0.45)]"
+              />
             </div>
 
-            <div className="mt-7 flex justify-center">
-              <div className="relative">
-                <img
-                  src="/sds-fc/logo.jpg"
-                  alt="SDS FC"
-                  className="h-28 w-28 rounded-2xl border border-[#C7A24A]/35 bg-black object-cover shadow-[0_0_60px_rgba(199,162,74,0.22)]"
-                />
-                <div className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-white/10" />
-              </div>
-            </div>
-
-            <h1 className="mt-6 text-5xl font-black tracking-tight sm:text-6xl">
+            {/* Title */}
+            <h1 className="mt-5 text-5xl font-black tracking-tight sm:text-6xl">
               <span className="text-white">SDS</span>{" "}
               <span className="text-[#F3E6C8]">FC</span>
             </h1>
 
-            <p className="mt-4 text-lg font-semibold text-white/70">
+            {/* Optional: keep this short so it doesn't clutter */}
+            <p className="mt-3 text-sm sm:text-base font-semibold text-white/70">
               Founded 2025 • Champions 2025 • Runners-up 2026
             </p>
 
-            <p className="mt-6 text-2xl font-extrabold text-[#F3E6C8]">
+            {/* Optional tagline (keep or delete) */}
+            <p className="mt-4 text-xl sm:text-2xl font-extrabold text-[#F3E6C8]">
               𝐹𝑜𝓇 𝐸𝒶𝒸𝒽 𝒪𝓉𝒽𝑒𝓇. 𝐹𝑜𝓇 𝒯𝒽𝑒 𝒢𝓇𝑒𝑒𝓃 𝒜𝓇𝓂𝓎.
             </p>
-
-            {/* CTAs */}
-            <div className="mt-8 flex flex-wrap justify-center gap-3">
-              <a
-                href="https://www.youtube.com/@BallerLeagueUK/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="rounded-full bg-[#C7A24A] px-6 py-3 text-sm font-black text-black transition hover:brightness-110"
-              >
-                Watch Highlights
-              </a>
-              <a
-                href="#squad"
-                className="rounded-full border border-[#C7A24A]/35 bg-white/5 px-6 py-3 text-sm font-black text-[#F3E6C8] transition hover:bg-[#C7A24A]/10"
-              >
-                View Squad
-              </a>
-              <a
-                href="#fixtures"
-                className="rounded-full border border-white/15 bg-white/5 px-6 py-3 text-sm font-black text-white/90 transition hover:bg-white/10"
-              >
-                Fixtures
-              </a>
-            </div>
-
-            {/* ticker */}
-            <div className="mt-10 overflow-hidden rounded-2xl border border-[#C7A24A]/15 bg-black/40">
-              <div className="whitespace-nowrap py-3 text-sm font-bold text-white/70">
-                <span className="inline-block animate-[marquee_16s_linear_infinite] px-6">
-                  🏆 CHAMPIONS 2025 • 🥈 RUNNERS-UP 2026 • ⭐ FAIRY-TALE RUN • 🔥 GIANT KILLERS •
-                  🟡 GOLDEN ERA • 🏟️ MATCHDAY CHAOS •
-                </span>
-                <span className="inline-block animate-[marquee_16s_linear_infinite] px-6">
-                  🏆 CHAMPIONS 2025 • 🥈 RUNNERS-UP 2026 • ⭐ FAIRY-TALE RUN • 🔥 GIANT KILLERS •
-                  🟡 GOLDEN ERA • 🏟️ MATCHDAY CHAOS •
-                </span>
-              </div>
-            </div>
-
-            <div className="mt-6 text-xs text-white/45">Scroll ↓</div>
           </div>
         </div>
 
-        {/* local keyframes */}
-        <style>{`
-          @keyframes marquee {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-          }
-        `}</style>
+        {/* Bottom CTA Dock (always at bottom, not cluttering) */}
+        <div className="absolute inset-x-0 bottom-0">
+          {/* dock backdrop */}
+          <div className="mx-auto max-w-7xl px-4 pb-10">
+            {/* <div className="mx-auto max-w-xl rounded-3xl border border-white/10 bg-black/45 p-3 backdrop-blur-md"> */}
+              <div className="flex flex-wrap justify-center gap-3">
+                <a
+                  href="https://www.youtube.com/@BallerLeagueUK/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-full bg-[#C7A24A] px-6 py-3 text-sm font-black text-black transition hover:brightness-110"
+                >
+                  Watch Highlights
+                </a>
+
+                <a
+                  href="#squad"
+                  className="rounded-full border border-[#C7A24A]/35 bg-white/5 px-6 py-3 text-sm font-black text-[#F3E6C8] transition hover:bg-[#C7A24A]/10"
+                >
+                  View Squad
+                </a>
+
+                <a
+                  href="#fixtures"
+                  className="rounded-full border border-white/15 bg-white/5 px-6 py-3 text-sm font-black text-white/90 transition hover:bg-white/10"
+                >
+                  Fixtures
+                </a>
+              </div>
+
+              <div className="mt-3 text-center text-xs text-white/45">Scroll ↓</div>
+            {/* </div> */}
+          </div>
+        </div>
       </section>
+
 
       {/* TROPHY CABINET */}
       <section className="mx-auto max-w-7xl px-4 py-14">
@@ -295,9 +270,6 @@ export default function SdsFcPage() {
                 {/* Badges */}
                 <div className="absolute bottom-4 left-4 rounded-full bg-[#C7A24A] px-3 py-1 text-xs font-black text-black">
                   {p.pos}
-                </div>
-                <div className="absolute right-4 top-4 rounded-full border border-white/10 bg-black/40 px-3 py-1 text-xs font-bold text-white/70">
-                  SDS FC
                 </div>
               </div>
               <div className="p-5">
@@ -452,10 +424,6 @@ function ManagementCard({
         </div>
 
         <h3 className="mt-2 text-2xl font-extrabold">{name}</h3>
-
-        <p className="mt-2 text-sm text-neutral-400">
-          SDS FC
-        </p>
       </div>
     </div>
   );
@@ -502,9 +470,6 @@ function ManagementCard1({
 
         <h3 className="mt-2 text-2xl font-extrabold">{name}</h3>
 
-        <p className="mt-2 text-sm text-neutral-400">
-          SDS FC
-        </p>
       </div>
     </div>
   );

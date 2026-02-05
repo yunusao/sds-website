@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 export default function SdsFcLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-[#050505] text-white">
-      {/* Top bar (different from main site) */}
+      {/* Top bar (different from main site)
       <header className="sticky top-0 z-50 border-b border-[#C7A24A]/15 bg-black/70 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
           <div className="flex items-center gap-3">
@@ -44,14 +44,14 @@ export default function SdsFcLayout({ children }: { children: React.ReactNode })
             </a>
           </nav>
         </div>
-      </header>
+      </header> */}
 
       {children}
 
       <footer className="border-t border-[#C7A24A]/10 bg-black/40">
         <div className="mx-auto max-w-7xl px-4 py-8">
           <div className="text-xs text-white/50">
-            SDS FC Fan Page • Not affiliated with SDS • Built for the Green Army.
+            SDS FC • Built for the Green Army.
           </div>
         </div>
       </footer>

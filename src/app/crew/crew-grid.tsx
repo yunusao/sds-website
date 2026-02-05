@@ -136,7 +136,7 @@ const CREW: CrewMember[] = [
   },
   {
     name: "Shuceeb",
-    role: "Editor / Panel",
+    role: "Editor / Producer",
     //bio: "Never ducks smoke. Always ready to argue football.",
     avatar: "/crew/shuceeb.jpg",
     socials: {
@@ -146,7 +146,7 @@ const CREW: CrewMember[] = [
   },
   {
     name: "Hussein",
-    role: "Editior / Panel",
+    role: "Editor / Producer",
     //bio: "Never ducks smoke. Always ready to argue football.",
     avatar: "/crew/hussein.jpg",
     socials: {

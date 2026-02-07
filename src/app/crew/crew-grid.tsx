@@ -141,7 +141,8 @@ const CREW: CrewMember[] = [
     avatar: "/crew/shuceeb.jpg",
     socials: {
       instagram: "https://www.instagram.com/shuceebb/",
-        x: "https://x.com/isitShuceeb",
+        x: "https://x.com/isitShuceeb", 
+        youtube: "https://www.youtube.com/@Shuceeb",
     },
   },
   {

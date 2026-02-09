@@ -6,7 +6,7 @@ import type { YouTubeVideo } from "@/lib/youtube";
 import { formatEpisodeTitle } from "@/lib/format";
 import { BsDiscord, BsInstagram, BsTiktok, BsTwitterX } from "react-icons/bs";
 
-type CrewKey = "Haseeb" | "Faysal" | "Ilyas" | "Amenyah";
+type CrewKey = "Sharky" | "Lyes" | "Fuad" | "FuIzzy";
 
 type Ratings = {
   overall: number; // 1-10
@@ -25,10 +25,10 @@ type CrewMember = {
 };
 
 const CREW: CrewMember[] = [
-  { key: "Haseeb", name: "Haseeb", role: "Host", avatar: "/crew/haseeb.webp" },
-  { key: "Faysal", name: "Faysal", role: "Panel", avatar: "/crew/faysal.webp" },
-  { key: "Ilyas", name: "Ilyas", role: "Panel", avatar: "/crew/ilyas.webp" },
-  { key: "Amenyah", name: "Amenyah", role: "Panel", avatar: "/crew/amenyah.jpg" },
+  { key: "Sharky", name: "Sharky", role: "Host", avatar: "/crew/sharky.webp" },
+  { key: "Lyes", name: "Lyes", role: "Panel", avatar: "/crew/lyes.webp" },
+  { key: "Fuad", name: "Fuad", role: "Panel", avatar: "/crew/fuad.webp" },
+  { key: "FuIzzy", name: "Fu Izzy", role: "Panel", avatar: "/crew/fu.webp" },
 ];
 
 type EpisodeStats = {
@@ -95,10 +95,10 @@ export default function SDSScoreClient({ latestVideo }: { latestVideo: YouTubeVi
 
   // Local sliders (your personal vote before submitting)
   const [votes, setVotes] = useState<Record<CrewKey, Ratings>>({
-    Haseeb: { overall: 8, banter: 8, knowledge: 7, hotTakes: 7, energy: 9, reaction: "" },
-    Faysal: { overall: 7, banter: 9, knowledge: 6, hotTakes: 7, energy: 8, reaction: "" },
-    Ilyas: { overall: 7, banter: 7, knowledge: 7, hotTakes: 8, energy: 7, reaction: "" },
-    Amenyah: { overall: 6, banter: 6, knowledge: 8, hotTakes: 6, energy: 6, reaction: "" },
+    Sharky: { overall: 8, banter: 8, knowledge: 7, hotTakes: 7, energy: 9, reaction: "" },
+    Lyes: { overall: 7, banter: 9, knowledge: 6, hotTakes: 7, energy: 8, reaction: "" },
+    Fuad: { overall: 7, banter: 7, knowledge: 7, hotTakes: 8, energy: 7, reaction: "" },
+    FuIzzy: { overall: 6, banter: 6, knowledge: 8, hotTakes: 6, energy: 6, reaction: "" },
   });
 
   // Email + submit state

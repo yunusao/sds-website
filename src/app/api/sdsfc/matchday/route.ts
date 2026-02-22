@@ -54,60 +54,113 @@ function outcomeForTeam(ev: any, teamIdNum: number): "W" | "D" | "L" | null {
   return "D";
 }
 
+const COMMON_HEADERS: Record<string, string> = {
+  "User-Agent":
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0 Safari/537.36",
+  Accept: "application/json,text/plain,*/*",
+  "Accept-Language": "en-US,en;q=0.9",
+  Referer: "https://www.sofascore.com/",
+  Origin: "https://www.sofascore.com",
+};
+
+async function fetchJsonWithTimeout(url: string, ms = 8000) {
+  const controller = new AbortController();
+  const t = setTimeout(() => controller.abort(), ms);
+
+  try {
+    const res = await fetch(url, {
+      headers: COMMON_HEADERS,
+      signal: controller.signal,
+      // Don’t let Next “optimize” this in weird ways; we already cache the route response.
+      cache: "no-store",
+    });
+
+    const text = await res.text();
+    const json = (() => {
+      try {
+        return text ? JSON.parse(text) : null;
+      } catch {
+        return null;
+      }
+    })();
+
+    return { ok: res.ok, status: res.status, text, json };
+  } finally {
+    clearTimeout(t);
+  }
+}
+
 /**
- * Fetch next/last events for a team from SofaScore (unofficial endpoints).
- * Works well for "Matchday Hub" cards.
+ * Try both SofaScore hosts (Vercel IPs get blocked sometimes on one but not the other).
  */
+async function fetchSofa(path: string) {
+  const primary = `https://api.sofascore.com/api/v1/${path}`;
+  const fallback = `https://api.sofascore.app/api/v1/${path}`;
+
+  const a = await fetchJsonWithTimeout(primary);
+  if (a.ok && a.json) return { host: "api.sofascore.com", url: primary, ...a };
+
+  const b = await fetchJsonWithTimeout(fallback);
+  if (b.ok && b.json) return { host: "api.sofascore.app", url: fallback, ...b };
+
+  // neither worked
+  return {
+    host: "none",
+    url: primary,
+    ok: false,
+    status: a.status || b.status || 0,
+    text: a.text || b.text || "",
+    json: null,
+    debug: {
+      primary: { url: primary, status: a.status, sample: (a.text || "").slice(0, 180) },
+      fallback: { url: fallback, status: b.status, sample: (b.text || "").slice(0, 180) },
+    },
+  };
+}
+
 export async function GET() {
   const teamId = process.env.SOFASCORE_TEAM_ID;
   if (!teamId) {
     return NextResponse.json(
-      { error: "Missing SOFASCORE_TEAM_ID in .env.local" },
+      { error: "Missing SOFASCORE_TEAM_ID in Vercel environment variables" },
       { status: 500 }
     );
   }
 
-  const nextUrl = `https://api.sofascore.com/api/v1/team/${teamId}/events/next/0`;
-  const lastUrl = `https://api.sofascore.com/api/v1/team/${teamId}/events/last/0`;
+  const nextPath = `team/${teamId}/events/next/0`;
+  const lastPath = `team/${teamId}/events/last/0`;
 
-  const headers = {
-    "User-Agent":
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome Safari",
-    Accept: "application/json",
-  };
+  const [nextRes, lastRes] = await Promise.all([fetchSofa(nextPath), fetchSofa(lastPath)]);
 
-  const [nextRes, lastRes] = await Promise.all([
-    fetch(nextUrl, { headers, next: { revalidate: 600 } }),
-    fetch(lastUrl, { headers, next: { revalidate: 600 } }),
-  ]);
-
-  // NOTE: next endpoint sometimes 404s for some teams/tournaments.
-  // We treat that as "no upcoming fixture" instead of failing the whole route.
-  if (!lastRes.ok) {
-    return NextResponse.json(
-      {
-        error: "Failed to fetch from SofaScore (last)",
-        last: { url: lastUrl, status: lastRes.status, body: await lastRes.text() },
+  // If last fails on Vercel (common), do NOT hard-fail the entire page.
+  // Return 200 with nulls so UI stays clean + include debug for logs.
+  if (!lastRes.ok || !lastRes.json) {
+    return okJson({
+      teamId,
+      nextEvent: null,
+      lastEvent: null,
+      recentForm: [],
+      softError: "Failed to fetch SofaScore last events",
+      debug: lastRes.debug ?? {
+        url: lastRes.url,
+        status: lastRes.status,
+        sample: (lastRes.text || "").slice(0, 180),
       },
-      { status: 502 }
-    );
+    });
   }
 
-  const nextJson = nextRes.ok ? await nextRes.json() : null;
-  const lastJson = await lastRes.json();
+  const nextJson = nextRes.ok ? nextRes.json : null;
+  const lastJson = lastRes.json;
 
   const nextEventRaw = nextJson?.events?.[0] ?? null;
 
-  // last endpoint returns a list of past events (usually newest first, but we sort safely)
   const eventsRaw = lastJson?.events ?? [];
   const eventsSorted = [...eventsRaw].sort(
     (a: any, b: any) => (b?.startTimestamp ?? 0) - (a?.startTimestamp ?? 0)
   );
 
-  // newest finished match
   const lastPlayed = eventsSorted.find((ev) => isFinished(ev)) ?? null;
 
-  // last 5 outcomes for this team
   const teamIdNum = Number(teamId);
   const recentForm = eventsSorted
     .filter((ev) => isFinished(ev))

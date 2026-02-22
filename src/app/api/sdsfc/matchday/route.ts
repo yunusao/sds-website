@@ -2,7 +2,7 @@
 import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
-export const revalidate = 600; // cache 10 minutes on Vercel
+export const revalidate = 600;
 
 function okJson(data: unknown) {
   return NextResponse.json(data, {
@@ -12,7 +12,6 @@ function okJson(data: unknown) {
   });
 }
 
-/** Sofascore team badge endpoint (works well in <img src="...">) */
 function teamBadgeUrl(teamId?: number) {
   if (!teamId) return null;
   return `https://api.sofascore.app/api/v1/team/${teamId}/image`;
@@ -54,7 +53,7 @@ function outcomeForTeam(ev: any, teamIdNum: number): "W" | "D" | "L" | null {
   return "D";
 }
 
-const COMMON_HEADERS: Record<string, string> = {
+const HEADERS: Record<string, string> = {
   "User-Agent":
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0 Safari/537.36",
   Accept: "application/json,text/plain,*/*",
@@ -63,49 +62,49 @@ const COMMON_HEADERS: Record<string, string> = {
   Origin: "https://www.sofascore.com",
 };
 
-async function fetchJsonWithTimeout(url: string, ms = 8000) {
-  const controller = new AbortController();
-  const t = setTimeout(() => controller.abort(), ms);
-
-  try {
-    const res = await fetch(url, {
-      headers: COMMON_HEADERS,
-      signal: controller.signal,
-      // Don’t let Next “optimize” this in weird ways; we already cache the route response.
-      cache: "no-store",
-    });
-
-    const text = await res.text();
-    const json = (() => {
-      try {
-        return text ? JSON.parse(text) : null;
-      } catch {
-        return null;
-      }
-    })();
-
-    return { ok: res.ok, status: res.status, text, json };
-  } finally {
-    clearTimeout(t);
-  }
+async function sleep(ms: number) {
+  await new Promise((r) => setTimeout(r, ms));
 }
 
-/**
- * Try both SofaScore hosts (Vercel IPs get blocked sometimes on one but not the other).
- */
+async function fetchJson(url: string) {
+  const res = await fetch(url, {
+    headers: HEADERS,
+    // IMPORTANT: allow Next/Vercel to cache this upstream call for 10 minutes
+    next: { revalidate: 600 },
+  });
+
+  const text = await res.text();
+  let json: any = null;
+  try {
+    json = text ? JSON.parse(text) : null;
+  } catch {
+    json = null;
+  }
+
+  return { ok: res.ok, status: res.status, text, json };
+}
+
+async function fetchWithRetry(url: string) {
+  const first = await fetchJson(url);
+  if (first.ok && first.json) return first;
+
+  // quick retry (helps with transient 429/5xx)
+  await sleep(250);
+  const second = await fetchJson(url);
+  return second;
+}
+
 async function fetchSofa(path: string) {
   const primary = `https://api.sofascore.com/api/v1/${path}`;
   const fallback = `https://api.sofascore.app/api/v1/${path}`;
 
-  const a = await fetchJsonWithTimeout(primary);
-  if (a.ok && a.json) return { host: "api.sofascore.com", url: primary, ...a };
+  const a = await fetchWithRetry(primary);
+  if (a.ok && a.json) return { url: primary, ...a };
 
-  const b = await fetchJsonWithTimeout(fallback);
-  if (b.ok && b.json) return { host: "api.sofascore.app", url: fallback, ...b };
+  const b = await fetchWithRetry(fallback);
+  if (b.ok && b.json) return { url: fallback, ...b };
 
-  // neither worked
   return {
-    host: "none",
     url: primary,
     ok: false,
     status: a.status || b.status || 0,
@@ -132,15 +131,14 @@ export async function GET() {
 
   const [nextRes, lastRes] = await Promise.all([fetchSofa(nextPath), fetchSofa(lastPath)]);
 
-  // If last fails on Vercel (common), do NOT hard-fail the entire page.
-  // Return 200 with nulls so UI stays clean + include debug for logs.
+  // If SofaScore blocks sometimes, don't hard-break your UI
   if (!lastRes.ok || !lastRes.json) {
     return okJson({
       teamId,
       nextEvent: null,
       lastEvent: null,
       recentForm: [],
-      softError: "Failed to fetch SofaScore last events",
+      softError: "SofaScore blocked/rate-limited (last events)",
       debug: lastRes.debug ?? {
         url: lastRes.url,
         status: lastRes.status,

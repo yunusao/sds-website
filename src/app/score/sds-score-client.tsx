@@ -6,7 +6,7 @@ import type { YouTubeVideo } from "@/lib/youtube";
 import { formatEpisodeTitle } from "@/lib/format";
 import { BsDiscord, BsInstagram, BsTiktok, BsTwitterX } from "react-icons/bs";
 
-type CrewKey = "Sharky" | "Faysal" | "Lyes" | "Liban";
+type CrewKey = "Sharky" | "Ilyas" | "Fuad" | "Kish";
 
 type Ratings = {
   overall: number; // 1-10
@@ -26,9 +26,9 @@ type CrewMember = {
 
 const CREW: CrewMember[] = [
   { key: "Sharky", name: "Sharky", role: "Host", avatar: "/crew/sharky.webp" },
-  { key: "Faysal", name: "Faysal", role: "Panel", avatar: "/crew/faysal.webp" },
-  { key: "Lyes", name: "Lyes", role: "Panel", avatar: "/crew/lyes.webp" },
-  { key: "Liban", name: "Liban", role: "Panel", avatar: "/crew/liban.webp" },
+  { key: "Ilyas", name: "Ilyas", role: "Vice Captain", avatar: "/crew/ilyas.webp" },
+  { key: "Fuad", name: "Fuad", role: "Panel", avatar: "/crew/fuad.webp" },
+  { key: "Kish", name: "Kish", role: "Panel", avatar: "/crew/kish.jpg" },
 ];
 
 type EpisodeStats = {
@@ -96,9 +96,9 @@ export default function SDSScoreClient({ latestVideo }: { latestVideo: YouTubeVi
   // Local sliders (your personal vote before submitting)
   const [votes, setVotes] = useState<Record<CrewKey, Ratings>>({
     Sharky: { overall: 8, banter: 8, knowledge: 7, hotTakes: 7, energy: 9, reaction: "" },
-    Faysal: { overall: 7, banter: 9, knowledge: 6, hotTakes: 7, energy: 8, reaction: "" },
-    Lyes: { overall: 7, banter: 7, knowledge: 7, hotTakes: 8, energy: 7, reaction: "" },
-    Liban: { overall: 6, banter: 6, knowledge: 8, hotTakes: 6, energy: 6, reaction: "" },
+    Ilyas: { overall: 7, banter: 9, knowledge: 6, hotTakes: 7, energy: 8, reaction: "" },
+    Fuad: { overall: 7, banter: 7, knowledge: 7, hotTakes: 8, energy: 7, reaction: "" },
+    Kish: { overall: 6, banter: 6, knowledge: 8, hotTakes: 6, energy: 6, reaction: "" },
   });
 
   // Email + submit state

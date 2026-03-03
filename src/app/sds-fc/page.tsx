@@ -1,115 +1,95 @@
 "use client";
-import Link from "next/link";
-import Script from "next/script";
-import {useEffect, useMemo, useState} from "react";
 
-const GOLD = "#C7A24A";
-const CREAM = "#F3E6C8";
+import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
 
 const TROPHIES = [
-  { title: "Baller League UK Champions", year: "2025", badge: "🏆" },
-  { title: "Baller League Runners-up", year: "2026", badge: "🥈" },
-  { title: "Fairy-tale Run", year: "2025–26", badge: "⭐" },
+  { title: "Baller League UK Champions", year: "Season 1", badge: "🏆" },
+  { title: "Baller League Runners-up", year: "Season 2", badge: "🥈" },
+  { title: "Fairy-tale Run", year: "Season 1", badge: "⭐" },
 ];
 
-const SQUAD = [
-  { name: "Kazaiah Sterling", pos: "MF", number: "#45", image: "/sds-fc/kaz.webp", stats: { apps: 13, goals: 17, assists: 3 } },
-  { name: "Alfie Matthews", pos: "ST", number: "#8", image: "/sds-fc/alfie.webp", stats: { apps: 9, goals: 5, assists: 1 } },
-  { name: "Mauro Vilhete", pos: "MF", number: "#20", image: "/sds-fc/mauro.webp", stats: { apps: 12, goals: 2, assists: 3 } },
-  { name: "Camilo Restrepo", pos: "MF", number: "#99", image: "/sds-fc/camilo.webp", stats: { apps: 5, goals: 1, assists: 2 } },
-  { name: "David Marques Castanho", pos: "MF", number: "#10", image: "/sds-fc/david.webp", stats: { apps: 13, goals: 5, assists: 6 } },
-  { name: "Hafed Al Droubi", pos: "GK", number: "#1", image: "/sds-fc/hafed.webp", stats: { apps: 13, goals: 1, assists: 0 } },
-  { name: "Calvin Dickson", pos: "MF", number: "#12", image: "/sds-fc/calvin.webp", stats: { apps: 1, goals: 0, assists: 1 } },
-  { name: "Finlay Chadwick", pos: "MF", number: "#4", image: "/sds-fc/finlay.webp", stats: { apps: 9, goals: 3, assists: 0 } },
-  { name: "Michael Folivi", pos: "ST", number: "#9", image: "/sds-fc/folivi.webp", stats: { apps: 8, goals: 4, assists: 2 } },
-  { name: "Youssef Chentouf", pos: "ST", number: "#11", image: "/sds-fc/youssef.webp", stats: { apps: 12, goals: 4, assists: 0 } },
-  { name: "Nya Kirby", pos: "MD", number: "#5", image: "/sds-fc/nya.webp", stats: { apps: 12, goals: 4, assists: 1 } },
-  { name: "Tarik Gidaree", pos: "DF", number: "#3", image: "/sds-fc/tarik.webp", stats: { apps: 6, goals: 2, assists: 0 } },
-];
+/**
+ * Squad by season
+ * - Add new seasons by adding another key like "2026–27": [...]
+ */
+const SQUADS_BY_SEASON: Record<
+  string,
+  Array<{
+    name: string;
+    pos: string;
+    number: string;
+    image: string;
+    stats: { apps: number; goals: number; assists: number };
+  }>
+> = {
+  "Season 2": [
+    { name: "Kazaiah Sterling", pos: "MF", number: "#45", image: "/sds-fc/kaz.webp", stats: { apps: 13, goals: 17, assists: 3 } },
+    { name: "Alfie Matthews", pos: "ST", number: "#8", image: "/sds-fc/alfie.webp", stats: { apps: 9, goals: 5, assists: 1 } },
+    { name: "Mauro Vilhete", pos: "MF", number: "#20", image: "/sds-fc/mauro.webp", stats: { apps: 12, goals: 2, assists: 3 } },
+    { name: "Camilo Restrepo", pos: "MF", number: "#99", image: "/sds-fc/camilo.webp", stats: { apps: 5, goals: 1, assists: 2 } },
+    { name: "David Marques Castanho", pos: "MF", number: "#10", image: "/sds-fc/david.webp", stats: { apps: 13, goals: 5, assists: 6 } },
+    { name: "Hafed Al Droubi", pos: "GK", number: "#1", image: "/sds-fc/hafed.webp", stats: { apps: 13, goals: 1, assists: 0 } },
+    { name: "Calvin Dickson", pos: "MF", number: "#12", image: "/sds-fc/calvin.webp", stats: { apps: 1, goals: 0, assists: 1 } },
+    { name: "Finlay Chadwick", pos: "MF", number: "#4", image: "/sds-fc/finlay.webp", stats: { apps: 9, goals: 3, assists: 0 } },
+    { name: "Michael Folivi", pos: "ST", number: "#9", image: "/sds-fc/folivi.webp", stats: { apps: 8, goals: 4, assists: 2 } },
+    { name: "Youssef Chentouf", pos: "ST", number: "#11", image: "/sds-fc/youssef.webp", stats: { apps: 12, goals: 4, assists: 0 } },
+    { name: "Nya Kirby", pos: "MD", number: "#5", image: "/sds-fc/nya.webp", stats: { apps: 12, goals: 4, assists: 1 } },
+    { name: "Tarik Gidaree", pos: "DF", number: "#3", image: "/sds-fc/tarik.webp", stats: { apps: 6, goals: 2, assists: 0 } },
+  ],
 
-const TIMELINE = [
-  { year: "2025", title: "Founded", text: "A team built from the community." },
-  { year: "2025", title: "Champions", text: "Baller League UK title — statement season." },
-  { year: "2026", title: "Runners-up", text: "Back again — deep run, big moments." },
-];
-
+ "Season 3": [
+    { name: "Kazaiah Sterling", pos: "MF", number: "#45", image: "/sds-fc/kaz.webp", stats: { apps: 0, goals: 0, assists: 0 } },
+    { name: "Hafed Al Droubi", pos: "GK", number: "#1", image: "/sds-fc/hafed.webp", stats: { apps: 0, goals: 0, assists: 0 } },
+    { name: "Nya Kirby", pos: "MD", number: "#5", image: "/sds-fc/nya.webp", stats: { apps: 0, goals: 0, assists: 0 } },
+    { name: "Ebenezer Addo-Kufor", pos: "DF", number: "#2", image: "/sds-fc/background.webp", stats: { apps: 0, goals: 0, assists: 0 } },
+    { name: "Camilo Restrepo", pos: "MF", number: "#99", image: "/sds-fc/camilo.webp", stats: { apps: 0, goals: 0, assists: 0 } },
+    { name: "Connor Wood", pos: "DF", number: "#23", image: "/sds-fc/background.webp", stats: { apps: 0, goals: 0, assists: 0 } },
+    { name: "Jousha Abbot", pos: "MF", number: "#14", image: "/sds-fc/background.webp", stats: { apps: 0, goals: 0, assists: 0 } },
+    { name: "Danny Bassett", pos: "FW", number: "#7", image: "/sds-fc/background.webp", stats: { apps: 0, goals: 0, assists: 0 } },
+    { name: "Youssef Chentouf", pos: "ST", number: "#11", image: "/sds-fc/youssef.webp", stats: { apps: 0, goals: 0, assists: 0 } },
+    { name: "Tarik Gidaree", pos: "DF", number: "#3", image: "/sds-fc/tarik.webp", stats: { apps: 0, goals: 0, assists: 0 } },
+    { name: "COMING SOON …", pos: "??", number: "??", image: "/sds-fc/background.webp", stats: { apps: 0, goals: 0, assists: 0 } },
+  ],
+};
 
 export default function SdsFcPage() {
-  type SofaScoreTeam = { name?: string };
-  type SofaScoreScore = { current?: number };
-  type SofaScoreStatus = { type?: string };
-
-  type SofaScoreEvent = {
-    startTimestamp?: number; // seconds
-    homeTeam?: SofaScoreTeam;
-    awayTeam?: SofaScoreTeam;
-    homeScore?: SofaScoreScore;
-    awayScore?: SofaScoreScore;
-    status?: SofaScoreStatus;
+  type Player = {
+    name: string;
+    pos: string;
+    number: string;
+    image: string;
+    stats: { apps: number; goals: number; assists: number };
   };
 
-  type MatchdayResponse = {
-    teamId: string;
-    nextEvent: SofaScoreEvent | null;
-    lastEvent: SofaScoreEvent | null;
-  };
-
-  function formatKickoff(tsSeconds?: number) {
-    if (!tsSeconds) return "TBD";
-    const d = new Date(tsSeconds * 1000);
-    return d.toLocaleString(undefined, {
-      weekday: "short",
-      month: "short",
-      day: "numeric",
-      hour: "numeric",
-      minute: "2-digit",
+  const seasons = useMemo(() => {
+    // Newest season first (Season 3, Season 2, Season 1)
+    return Object.keys(SQUADS_BY_SEASON).sort((a, b) => {
+      const numA = parseInt(a.match(/\d+/)?.[0] ?? "0");
+      const numB = parseInt(b.match(/\d+/)?.[0] ?? "0");
+      return numB - numA;
     });
-  }
-
-  function isFinished(e: SofaScoreEvent | null) {
-    const t = e?.status?.type?.toLowerCase();
-    return t === "finished" || t === "ended";
-  }
-
-  function scoreLine(e: SofaScoreEvent | null) {
-    const hs = e?.homeScore?.current;
-    const as = e?.awayScore?.current;
-    if (typeof hs === "number" && typeof as === "number") return `${hs} — ${as}`;
-    return "—";
-  }
-
-  const [matchday, setMatchday] = useState<MatchdayResponse | null>(null);
-  const [matchdayLoading, setMatchdayLoading] = useState(true);
-  const [matchdayError, setMatchdayError] = useState<string | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    async function run() {
-      try {
-        setMatchdayLoading(true);
-        setMatchdayError(null);
-
-        const res = await fetch("/api/sdsfc/matchday", { cache: "no-store" });
-        if (!res.ok) throw new Error(`API error ${res.status}`);
-
-        const data = (await res.json()) as MatchdayResponse;
-        if (!cancelled) setMatchday(data);
-      } catch (err: any) {
-        if (!cancelled) setMatchdayError(err?.message ?? "Failed to load matchday data");
-      } finally {
-        if (!cancelled) setMatchdayLoading(false);
-      }
-    }
-
-    run();
-    return () => {
-      cancelled = true;
-    };
   }, []);
 
-  const lastEvent = matchday?.lastEvent ?? null;
-  const nextEvent = matchday?.nextEvent ?? null;
+  const [selectedSeason, setSelectedSeason] = useState<string>(
+    seasons[0] ?? "Season 1"
+  );
+
+  const activeSquad = useMemo(() => {
+    return SQUADS_BY_SEASON[selectedSeason] ?? [];
+  }, [selectedSeason]);
+
+  const [activePlayer, setActivePlayer] = useState<Player | null>(null);
+
+  // Close modal on ESC
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") setActivePlayer(null);
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, []);
+
   return (
     <main className="relative">
       {/* HERO */}
@@ -129,7 +109,7 @@ export default function SdsFcPage() {
           <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/40 to-black/95" />
         </div>
 
-        {/* Content area (logo + title near top/middle, not touching buttons) */}
+        {/* Content area */}
         <div className="relative mx-auto flex min-h-screen max-w-7xl px-4 pt-28 pb-28">
           <div className="mx-auto w-full max-w-3xl text-center">
             {/* Crest/logo */}
@@ -147,61 +127,59 @@ export default function SdsFcPage() {
               <span className="text-[#F3E6C8]">FC</span>
             </h1>
 
-            {/* Optional: keep this short so it doesn't clutter */}
             <p className="mt-3 text-sm sm:text-base font-semibold text-white/70">
               Founded 2025 • Champions 2025 • Runners-up 2026
             </p>
 
-            {/* Optional tagline (keep or delete) */}
             <p className="mt-4 text-xl sm:text-2xl font-extrabold text-[#F3E6C8]">
               𝐹𝑜𝓇 𝐸𝒶𝒸𝒽 𝒪𝓉𝒽𝑒𝓇. 𝐹𝑜𝓇 𝒯𝒽𝑒 𝒢𝓇𝑒𝑒𝓃 𝒜𝓇𝓂𝓎.
             </p>
           </div>
         </div>
 
-        {/* Bottom CTA Dock (always at bottom, not cluttering) */}
+        {/* Bottom CTA Dock */}
         <div className="absolute inset-x-0 bottom-0">
-          {/* dock backdrop */}
           <div className="mx-auto max-w-7xl px-4 pb-10">
-            {/* <div className="mx-auto max-w-xl rounded-3xl border border-white/10 bg-black/45 p-3 backdrop-blur-md"> */}
-              <div className="flex flex-wrap justify-center gap-3">
-                <a
-                  href="https://www.youtube.com/@BallerLeagueUK/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="rounded-full bg-[#C7A24A] px-6 py-3 text-sm font-black text-black transition hover:brightness-110"
-                >
-                  Watch Highlights
-                </a>
+            <div className="flex flex-wrap justify-center gap-3">
+              <a
+                href="https://www.youtube.com/@BallerLeagueUK/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-full bg-[#C7A24A] px-6 py-3 text-sm font-black text-black transition hover:brightness-110"
+              >
+                Watch Highlights
+              </a>
 
-                <a
-                  href="#squad"
-                  className="rounded-full border border-[#C7A24A]/35 bg-white/5 px-6 py-3 text-sm font-black text-[#F3E6C8] transition hover:bg-[#C7A24A]/10"
-                >
-                  View Squad
-                </a>
+              <a
+                href="#squad"
+                className="rounded-full border border-[#C7A24A]/35 bg-white/5 px-6 py-3 text-sm font-black text-[#F3E6C8] transition hover:bg-[#C7A24A]/10"
+              >
+                View Squad
+              </a>
 
-                <a
-                  href="#fixtures"
-                  className="rounded-full border border-white/15 bg-white/5 px-6 py-3 text-sm font-black text-white/90 transition hover:bg-white/10"
-                >
-                  Fixtures
-                </a>
-              </div>
+              <a
+                href="#fixtures"
+                className="rounded-full border border-white/15 bg-white/5 px-6 py-3 text-sm font-black text-white/90 transition hover:bg-white/10"
+              >
+                Fixtures
+              </a>
+            </div>
 
-              <div className="mt-3 text-center text-xs text-white/45">Scroll ↓</div>
-            {/* </div> */}
+            <div className="mt-3 text-center text-xs text-white/45">Scroll ↓</div>
           </div>
         </div>
       </section>
-
 
       {/* TROPHY CABINET */}
       <section className="mx-auto max-w-7xl px-4 py-14">
         <div className="flex items-end justify-between gap-6">
           <div>
-            <h2 className="text-2xl font-black tracking-tight text-white">Trophy Cabinet</h2>
-            <p className="mt-2 text-sm text-white/55">Gold era. Big nights. Real moments.</p>
+            <h2 className="text-2xl font-black tracking-tight text-white">
+              Trophy Cabinet
+            </h2>
+            <p className="mt-2 text-sm text-white/55">
+              Gold era. Big nights. Real moments.
+            </p>
           </div>
           <Link
             href="/episodes"
@@ -223,7 +201,9 @@ export default function SdsFcPage() {
                   {t.year}
                 </div>
               </div>
-              <div className="mt-4 text-lg font-extrabold text-white">{t.title}</div>
+              <div className="mt-4 text-lg font-extrabold text-white">
+                {t.title}
+              </div>
               <div className="mt-2 text-sm text-white/55">
                 A season the Green Army won’t forget.
               </div>
@@ -231,25 +211,59 @@ export default function SdsFcPage() {
           ))}
         </div>
       </section>
-      
+
       {/* MATCHDAY HUB */}
       <MatchdayHub />
 
-      
       {/* SQUAD */}
       <section id="squad" className="mx-auto max-w-7xl px-4 pb-14">
-        <div className="flex items-end justify-between gap-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h2 className="text-2xl font-black tracking-tight text-white">Squad</h2>
-            <p className="mt-2 text-sm text-white/55">FIFA-style roster (we can auto-pull later).</p>
+            <h2 className="text-2xl font-black tracking-tight text-white">
+              Squad
+            </h2>
+            <p className="mt-2 text-sm text-white/55">
+              FIFA-style roster (we can auto-pull later).
+            </p>
+          </div>
+
+          {/* Season dropdown */}
+          <div className="w-full sm:w-auto">
+            <label className="mb-2 block text-xs font-bold text-white/55">
+              Season
+            </label>
+            <div className="relative">
+              <select
+                value={selectedSeason}
+                onChange={(e) => setSelectedSeason(e.target.value)}
+                className="w-full appearance-none rounded-2xl border border-[#C7A24A]/25 bg-[#0B0B0B] px-4 py-3 pr-10 text-sm font-extrabold text-[#F3E6C8] outline-none transition hover:border-[#C7A24A]/45 focus:border-[#C7A24A]/60"
+              >
+                {seasons.map((s) => (
+                  <option
+                    key={s}
+                    value={s}
+                    className="bg-[#0B0B0B] text-[#F3E6C8]"
+                  >
+                    {s}
+                  </option>
+                ))}
+              </select>
+
+              <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[#C7A24A]">
+                ▼
+              </div>
+            </div>
           </div>
         </div>
+
         {/* Management */}
         <ManagementSection />
+
+        {/* Players */}
         <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {SQUAD.map((p) => (
+          {activeSquad.map((p) => (
             <div
-              key={p.name}
+              key={`${selectedSeason}-${p.name}`}
               className="group overflow-hidden rounded-2xl border border-[#C7A24A]/15 bg-[#0B0B0B] transition hover:-translate-y-1 hover:border-[#C7A24A]/35"
             >
               <div className="relative h-[260px] w-full overflow-hidden">
@@ -261,20 +275,21 @@ export default function SdsFcPage() {
                   loading="lazy"
                 />
 
-                {/* Dark readability overlay */}
+                {/* Overlays */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
-
-                {/* Subtle gold aura */}
                 <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(199,162,74,0.20),transparent_60%)]" />
 
-                {/* Badges */}
+                {/* Pos badge */}
                 <div className="absolute bottom-4 left-4 rounded-full bg-[#C7A24A] px-3 py-1 text-xs font-black text-black">
                   {p.pos}
                 </div>
               </div>
+
               <div className="p-5">
                 <div className="text-lg font-extrabold text-white">{p.name}</div>
-                <div className="mt-1 text-sm font-semibold text-[#F3E6C8]/80">{p.number}</div>
+                <div className="mt-1 text-sm font-semibold text-[#F3E6C8]/80">
+                  {p.number}
+                </div>
 
                 <div className="mt-4 grid grid-cols-3 gap-2 text-xs">
                   {[
@@ -283,31 +298,35 @@ export default function SdsFcPage() {
                     ["ASSISTS", p.stats.assists],
                   ].map(([label, value]) => (
                     <div
-                      key={label}
+                      key={String(label)}
                       className="rounded-xl border border-white/10 bg-black/40 px-3 py-2 text-center"
                     >
-                      <div className="font-black text-white">{value}</div>
+                      <div className="font-black text-white">{value as number}</div>
                       <div className="mt-1 font-bold text-white/50">{label}</div>
                     </div>
                   ))}
                 </div>
 
-
-                <div className="mt-5 text-sm font-bold text-[#C7A24A]">View player →</div>
+                {/* View player button */}
+                <button
+                  type="button"
+                  onClick={() => setActivePlayer(p)}
+                  className="mt-5 text-left text-sm font-black text-[#C7A24A] transition hover:underline"
+                >
+                  View player →
+                </button>
               </div>
             </div>
           ))}
         </div>
       </section>
 
-  {/* SOCIAL HUB */}
+      {/* SOCIAL HUB */}
       <section className="mx-auto max-w-7xl px-4 pb-16">
         <h2 className="text-2xl font-black tracking-tight text-white">
           The Green Army
         </h2>
-        <p className="mt-2 text-sm text-white/55">
-          Follow the journey
-        </p>
+        <p className="mt-2 text-sm text-white/55">Follow the journey</p>
 
         <div className="mt-8 grid gap-6 lg:grid-cols-2">
           {/* Instagram */}
@@ -335,7 +354,7 @@ export default function SdsFcPage() {
             </div>
           </div>
 
-          {/* X (Twitter) — STABLE IFRAME EMBED */}
+          {/* X (Twitter) */}
           <div className="rounded-2xl border border-[#C7A24A]/15 bg-[#0B0B0B] p-4">
             <div className="mb-3 flex items-center justify-between">
               <span className="text-sm font-black text-white">X (Twitter)</span>
@@ -353,9 +372,13 @@ export default function SdsFcPage() {
               <TwitterTimeline />
             </div>
           </div>
-
         </div>
       </section>
+
+      {/* PLAYER MODAL */}
+      {activePlayer ? (
+        <PlayerModal player={activePlayer} onClose={() => setActivePlayer(null)} />
+      ) : null}
     </main>
   );
 }
@@ -363,24 +386,13 @@ export default function SdsFcPage() {
 function ManagementSection() {
   return (
     <section className="mt-20">
-
       <div className="grid gap-8 md:grid-cols-2">
-        <ManagementCard
-          role="Manager"
-          name="Sharky"
-          image="/sds-fc/sharky.webp"
-        />
-
-        <ManagementCard1
-          role="Head Coach"
-          name="Gaffer Maz"
-          image="/sds-fc/gaffer.png"
-        />
+        <ManagementCard role="Manager" name="Sharky" image="/sds-fc/sharky.webp" />
+        <ManagementCard1 role="Head Coach" name="Gaffer Maz" image="/sds-fc/gaffer.png" />
       </div>
     </section>
   );
 }
-
 
 //--------------------------------------FUNCTIONS-------------------------------------------------------------------
 
@@ -395,34 +407,17 @@ function ManagementCard({
 }) {
   return (
     <div className="relative overflow-hidden rounded-3xl border border-[#c7a24a]/30 bg-black">
-      {/* Background glow */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(199,162,74,0.35),transparent_65%)]" />
 
-      {/* Crest watermark */}
-      <img
-        src="/sds-fc/logo.jpg"
-        alt=""
-        className="absolute right-4 top-4 w-24 opacity-10"
-      />
+      <img src="/sds-fc/logo.jpg" alt="" className="absolute right-4 top-4 w-24 opacity-10" />
 
-      {/* Image */}
       <div className="relative h-[420px] overflow-hidden">
-        <img
-          src={image}
-          alt={name}
-          className="h-full w-full object-cover object-top"
-        />
-
-        {/* Gradient fade */}
+        <img src={image} alt={name} className="h-full w-full object-cover object-top" />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
       </div>
 
-      {/* Info */}
       <div className="relative p-6 text-center">
-        <div className="text-sm uppercase tracking-widest text-[#c7a24a]">
-          {role}
-        </div>
-
+        <div className="text-sm uppercase tracking-widest text-[#c7a24a]">{role}</div>
         <h3 className="mt-2 text-2xl font-extrabold">{name}</h3>
       </div>
     </div>
@@ -440,36 +435,18 @@ function ManagementCard1({
 }) {
   return (
     <div className="relative overflow-hidden rounded-3xl border border-[#c7a24a]/30 bg-black">
-      {/* Background glow */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(199,162,74,0.35),transparent_65%)]" />
 
-      {/* Crest watermark */}
-      <img
-        src="/sds-fc/logo.jpg"
-        alt=""
-        className="absolute right-4 top-4 w-24 opacity-10"
-      />
+      <img src="/sds-fc/logo.jpg" alt="" className="absolute right-4 top-4 w-24 opacity-10" />
 
-      {/* Image */}
       <div className="relative h-[420px] overflow-hidden">
-        <img
-          src={image}
-          alt={name}
-          className="h-full w-full object-cover object-[50%_20%]"
-        />
-
-        {/* Gradient fade */}
+        <img src={image} alt={name} className="h-full w-full object-cover object-[50%_20%]" />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
       </div>
 
-      {/* Info */}
       <div className="relative p-6 text-center">
-        <div className="text-sm uppercase tracking-widest text-[#c7a24a]">
-          {role}
-        </div>
-
+        <div className="text-sm uppercase tracking-widest text-[#c7a24a]">{role}</div>
         <h3 className="mt-2 text-2xl font-extrabold">{name}</h3>
-
       </div>
     </div>
   );
@@ -488,7 +465,6 @@ function formatKickoff(ts?: number) {
 }
 
 function statusLabel(ev: any) {
-  // Basic labels (SofaScore has more fields; keep it simple)
   if (!ev) return "Scheduled";
   if (typeof ev?.homeScore?.current === "number") return "FT";
   return "Scheduled";
@@ -510,6 +486,114 @@ function TwitterTimeline() {
   );
 }
 
+function PlayerModal({
+  player,
+  onClose,
+}: {
+  player: {
+    name: string;
+    pos: string;
+    number: string;
+    image: string;
+    stats: { apps: number; goals: number; assists: number };
+  };
+  onClose: () => void;
+}) {
+  return (
+    <div
+      className="fixed inset-0 z-50 grid place-items-center px-4"
+      role="dialog"
+      aria-modal="true"
+      aria-label={`${player.name} stats`}
+    >
+      {/* Backdrop */}
+      <button
+        type="button"
+        onClick={onClose}
+        className="absolute inset-0 bg-black/70"
+        aria-label="Close"
+      />
+
+      {/* Modal card */}
+      <div className="relative w-full max-w-xl overflow-hidden rounded-3xl border border-[#C7A24A]/25 bg-[#0B0B0B] shadow-2xl">
+        {/* Top image */}
+        <div className="relative h-[280px] w-full">
+          <img
+            src={player.image}
+            alt={player.name}
+            className="h-full w-full object-cover object-[50%_20%]"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-transparent" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(199,162,74,0.22),transparent_60%)]" />
+
+          {/* Close */}
+          <button
+            type="button"
+            onClick={onClose}
+            className="absolute right-4 top-4 rounded-full border border-white/15 bg-black/50 px-3 py-1 text-xs font-black text-white/90 hover:bg-black/70"
+          >
+            ✕ Close
+          </button>
+
+          {/* Badges */}
+          <div className="absolute bottom-4 left-4 flex gap-2">
+            <div className="rounded-full bg-[#C7A24A] px-3 py-1 text-xs font-black text-black">
+              {player.pos}
+            </div>
+            <div className="rounded-full border border-[#C7A24A]/25 bg-black/45 px-3 py-1 text-xs font-black text-[#F3E6C8]">
+              {player.number}
+            </div>
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="p-6">
+          <div className="text-2xl font-black text-white">{player.name}</div>
+          <div className="mt-1 text-sm font-bold text-white/55">
+            Season stats
+          </div>
+
+          <div className="mt-5 grid grid-cols-3 gap-3 text-sm">
+            {[
+              ["Apps", player.stats.apps],
+              ["Goals", player.stats.goals],
+              ["Assists", player.stats.assists],
+            ].map(([label, value]) => (
+              <div
+                key={String(label)}
+                className="rounded-2xl border border-white/10 bg-black/40 px-4 py-4 text-center"
+              >
+                <div className="text-2xl font-black text-white">{value as number}</div>
+                <div className="mt-1 text-xs font-bold text-white/50">
+                  {label}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Footer actions */}
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-end">
+            <button
+              type="button"
+              onClick={onClose}
+              className="rounded-full border border-white/15 bg-white/5 px-5 py-3 text-sm font-black text-white/90 hover:bg-white/10"
+            >
+              Close
+            </button>
+            <a
+              href="#"
+              onClick={(e) => e.preventDefault()}
+              className="rounded-full bg-[#C7A24A] px-5 py-3 text-sm font-black text-black hover:brightness-110 text-center"
+            >
+              Add highlights later →
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function MatchdayHub() {
   const [loading, setLoading] = useState(true);
   const [matchday, setMatchday] = useState<any>(null);
@@ -525,10 +609,7 @@ function MatchdayHub() {
         const res = await fetch("/api/sdsfc/matchday", { cache: "no-store" });
         const json = await res.json();
 
-        if (!res.ok) {
-          throw new Error(json?.error ?? "Failed to load matchday");
-        }
-
+        if (!res.ok) throw new Error(json?.error ?? "Failed to load matchday");
         if (alive) setMatchday(json);
       } catch (e: any) {
         if (alive) setError(e?.message ?? "Failed to load matchday");
@@ -567,9 +648,7 @@ function MatchdayHub() {
               <div className="rounded-2xl border border-[#C7A24A]/15 bg-black/40 p-5">
                 <div className="flex items-center justify-between">
                   <div className="text-xs font-bold text-white/60">LATEST RESULT</div>
-                  <div className="text-xs font-bold text-white/55">
-                    {statusLabel(last)}
-                  </div>
+                  <div className="text-xs font-bold text-white/55">{statusLabel(last)}</div>
                 </div>
 
                 {last ? (
@@ -584,17 +663,13 @@ function MatchdayHub() {
                         />
                       ) : null}
 
-                      <span className="text-white/90">
-                        {last?.homeTeam?.name ?? "Home"}
-                      </span>
+                      <span className="text-white/90">{last?.homeTeam?.name ?? "Home"}</span>
 
                       <span className="text-[#C7A24A]">
                         {last?.homeScore?.current ?? "-"} — {last?.awayScore?.current ?? "-"}
                       </span>
 
-                      <span className="text-white/90">
-                        {last?.awayTeam?.name ?? "Away"}
-                      </span>
+                      <span className="text-white/90">{last?.awayTeam?.name ?? "Away"}</span>
 
                       {last?.awayBadge ? (
                         <img
@@ -627,16 +702,12 @@ function MatchdayHub() {
                           </div>
                         ))
                       ) : (
-                        <div className="text-xs text-white/45">
-                          Form not available yet.
-                        </div>
+                        <div className="text-xs text-white/45">Form not available yet.</div>
                       )}
                     </div>
                   </>
                 ) : (
-                  <div className="mt-3 text-sm text-white/55">
-                    No result found yet.
-                  </div>
+                  <div className="mt-3 text-sm text-white/55">No result found yet.</div>
                 )}
               </div>
 
@@ -644,9 +715,7 @@ function MatchdayHub() {
               <div className="rounded-2xl border border-[#C7A24A]/15 bg-black/40 p-5">
                 <div className="flex items-center justify-between">
                   <div className="text-xs font-bold text-white/60">NEXT FIXTURE</div>
-                  <div className="text-xs font-bold text-white/55">
-                    {statusLabel(next)}
-                  </div>
+                  <div className="text-xs font-bold text-white/55">{statusLabel(next)}</div>
                 </div>
 
                 {next ? (
@@ -661,15 +730,11 @@ function MatchdayHub() {
                         />
                       ) : null}
 
-                      <span className="text-white/90">
-                        {next?.homeTeam?.name ?? "Home"}
-                      </span>
+                      <span className="text-white/90">{next?.homeTeam?.name ?? "Home"}</span>
 
                       <span className="text-[#C7A24A]">vs</span>
 
-                      <span className="text-white/90">
-                        {next?.awayTeam?.name ?? "Away"}
-                      </span>
+                      <span className="text-white/90">{next?.awayTeam?.name ?? "Away"}</span>
 
                       {next?.awayBadge ? (
                         <img
@@ -686,9 +751,7 @@ function MatchdayHub() {
                     </div>
                   </>
                 ) : (
-                  <div className="mt-3 text-sm text-white/55">
-                    No upcoming fixture found yet.
-                  </div>
+                  <div className="mt-3 text-sm text-white/55">No upcoming fixture found yet.</div>
                 )}
 
                 <a
@@ -704,7 +767,7 @@ function MatchdayHub() {
           )}
         </div>
 
-        {/* right column stays as you already have it */}
+        {/* Fan Zone */}
         <div className="rounded-2xl border border-white/10 bg-[#0B0B0B] p-6">
           <h3 className="text-lg font-black text-white">Fan Zone</h3>
           <p className="mt-2 text-sm text-white/55">Quick polls + community energy.</p>
